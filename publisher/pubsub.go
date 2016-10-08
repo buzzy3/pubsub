@@ -14,8 +14,8 @@ var (
 	subscription *pubsub.Subscription
 	countMu      sync.Mutex
 	count        int
-	PubSubClient *pubsub.Client
-	PubSubCtx    context.Context
+	// PubSubClient *pubsub.Client
+	// PubSubCtx    context.Context
 )
 
 type PubsubMsg struct {
@@ -34,15 +34,27 @@ type PubsubMsg struct {
 	Meta        map[string]interface{} `json:"meta"`
 }
 
-// Publish sends a message to PUBSUB
-func Publish(msg []byte, topic string) {
-	publish("my-topic", msg)
+type Agent struct {
+	Verbose   bool
+	ProjectID string
+	Env       string
 }
 
-func publish(topic string, data []byte) {
+func NewAgent() *Agent {
+	agent := &Agent{
+		Verbose: true,
+		Env:     "development",
+	}
+	return agent
+}
 
-	if shouldPublish() {
-		log.Print("Publishing message to")
+// Publish sends a message to PUBSUB
+func (agent *Agent) Publish(msg []byte, topic string) {
+	if agent.shouldPublish() {
+
+		PubSubCtx := context.Background()
+		PubSubClient, _ := pubsub.NewClient(PubSubCtx, agent.ProjectID)
+
 		if os.Getenv("PUBSUB_EMULATOR_HOST") != "" {
 			fmt.Printf("USING PUBSUB EMULATOR: %s\n", os.Getenv("PUBSUB_EMULATOR_HOST"))
 		}
@@ -50,7 +62,7 @@ func publish(topic string, data []byte) {
 		t := PubSubClient.Topic(topic)
 
 		msgIDs, err := t.Publish(PubSubCtx, &pubsub.Message{
-			Data: []byte(data),
+			Data: []byte(msg),
 		})
 
 		if err != nil {
@@ -63,20 +75,9 @@ func publish(topic string, data []byte) {
 	// log.Print("Not publishing message, not allowed")
 }
 
-func shouldPublish() bool {
-
-	env := os.Getenv("ENV")
-	if env == "production" || env == "development" {
-		return os.Getenv("PROJECT_ID") != ""
+func (agent *Agent) shouldPublish() bool {
+	if agent.Env == "production" || agent.Env == "development" {
+		return agent.ProjectID != ""
 	}
 	return false
-}
-
-func Publisher() {
-
-	projectID := os.Getenv("PROJECT_ID")
-	if shouldPublish() {
-		PubSubCtx = context.Background()
-		PubSubClient, _ = pubsub.NewClient(PubSubCtx, projectID)
-	}
 }
