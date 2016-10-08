@@ -14,8 +14,6 @@ var (
 	subscription *pubsub.Subscription
 	countMu      sync.Mutex
 	count        int
-	// PubSubClient *pubsub.Client
-	// PubSubCtx    context.Context
 )
 
 type PubsubMsg struct {
@@ -72,7 +70,6 @@ func (agent *Agent) Publish(msg []byte, topic string) {
 		}
 		return
 	}
-	// log.Print("Not publishing message, not allowed")
 }
 
 func (agent *Agent) shouldPublish() bool {
