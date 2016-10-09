@@ -16,22 +16,6 @@ var (
 	count        int
 )
 
-type PubsubMsg struct {
-	Body        string                 `json:"body"`
-	ID          string                 `json:"id"`
-	OperationID string                 `json:"operation_id"`
-	DeviceID    int                    `json:"device_id"`
-	Region      string                 `json:"region"`
-	Type        string                 `json:"type"`
-	Output      string                 `json:"output"`
-	Success     bool                   `json:"success"`
-	Topic       string                 `json:"topic"`
-	StatusTopic string                 `json:"status_topic"`
-	Cmd         string                 `json:"cmd"`
-	PublicToken string                 `json:"public_token"`
-	Meta        map[string]interface{} `json:"meta"`
-}
-
 type Agent struct {
 	Verbose   bool
 	ProjectID string
