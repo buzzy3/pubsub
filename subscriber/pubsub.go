@@ -1,11 +1,10 @@
 package subscriber
 
 import (
-	"log"
-	"sync"
-
 	"cloud.google.com/go/pubsub"
 	"golang.org/x/net/context"
+	"log"
+	"sync"
 )
 
 var (
@@ -37,7 +36,7 @@ func (agent *Agent) Subscribe() *pubsub.MessageIterator {
 	if agent.Env == "development" || agent.Env == "production" {
 
 		ctx := context.Background()
-		client, err := pubsub.NewClient(PubSubCtx, agent.ProjectID)
+		client, err := pubsub.NewClient(ctx, agent.ProjectID)
 
 		if err != nil {
 			log.Fatal(err)
