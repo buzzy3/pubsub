@@ -32,7 +32,7 @@ func NewAgent() *Agent {
 
 }
 
-func (agent *Agent) Subscribe() *pubsub.Iterator {
+func (agent *Agent) Subscribe() *pubsub.MessageIterator {
 
 	if agent.Env == "development" || agent.Env == "production" {
 
