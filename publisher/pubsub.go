@@ -20,35 +20,43 @@ type Agent struct {
 	Verbose   bool
 	ProjectID string
 	Env       string
+	Client    *pubsub.Client
 }
 
-func NewAgent() *Agent {
-	agent := &Agent{
-		Verbose: true,
-		Env:     "development",
+func NewAgent(projectID string) (*Agent, error) {
+	var agent Agent
+	agent.Verbose = true
+	agent.Env = "development"
+
+	ctx := context.Background()
+	PubSubClient, err := pubsub.NewClient(ctx, projectID)
+	if err != nil {
+		log.Print("ERROR: %v", err)
+		return &agent, err
 	}
-	return agent
+
+	agent.Client = PubSubClient
+	return &agent, nil
 }
 
 // Publish sends a message to PUBSUB
 func (agent *Agent) Publish(msg []byte, topic string) {
 	if agent.shouldPublish() {
 
-		PubSubCtx := context.Background()
-		PubSubClient, _ := pubsub.NewClient(PubSubCtx, agent.ProjectID)
+		ctx := context.Background()
 
 		if os.Getenv("PUBSUB_EMULATOR_HOST") != "" {
 			fmt.Printf("USING PUBSUB EMULATOR: %s\n", os.Getenv("PUBSUB_EMULATOR_HOST"))
 		}
 
-		t := PubSubClient.Topic(topic)
+		t := agent.Client.Topic(topic)
 
-		msgIDs, err := t.Publish(PubSubCtx, &pubsub.Message{
+		msgIDs, err := t.Publish(ctx, &pubsub.Message{
 			Data: []byte(msg),
 		})
 
 		if err != nil {
-			log.Println(err)
+			log.Println("COULD NOT PUBLISH MESSAGE", err)
 		} else {
 			log.Printf("Published a message with a message id: %s\n", msgIDs[0])
 		}

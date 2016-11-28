@@ -1,11 +1,10 @@
 package subscriber
 
 import (
-	"log"
-	"sync"
-
 	"cloud.google.com/go/pubsub"
 	"golang.org/x/net/context"
+	"log"
+	"sync"
 )
 
 var (
@@ -21,15 +20,23 @@ type Agent struct {
 	ProjectID    string
 	Subscription string
 	Env          string
+	Client       *pubsub.Client
 }
 
-func NewAgent() *Agent {
-	agent := &Agent{
-		Verbose: true,
-		Env:     "development",
-	}
-	return agent
+func NewAgent(projectID string) (*Agent, error) {
+	var agent Agent
+	agent.Verbose = true
+	agent.Env = "development"
 
+	ctx := context.Background()
+	PubSubClient, err := pubsub.NewClient(ctx, projectID)
+	if err != nil {
+		log.Print("ERROR: %v", err)
+		return &agent, err
+	}
+
+	agent.Client = PubSubClient
+	return &agent, nil
 }
 
 func (agent *Agent) Subscribe() *pubsub.MessageIterator {
@@ -37,13 +44,8 @@ func (agent *Agent) Subscribe() *pubsub.MessageIterator {
 	if agent.Env == "development" || agent.Env == "production" {
 
 		ctx := context.Background()
-		client, err := pubsub.NewClient(PubSubCtx, agent.ProjectID)
 
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		subscription = client.Subscription(agent.Subscription)
+		subscription = agent.Client.Subscription(agent.Subscription)
 
 		it, err := subscription.Pull(ctx)
 		if err != nil {

@@ -43,3 +43,14 @@ export PUBSUB_EMULATOR_HOST=localhost:8602
 
 And then run again. All should be well.
 
+**Authenticating**
+
+If you're using this in GCE, you probably don't need any auth credentials. However, if you're using outside or DO need them, you can include by setting the following ENV variable:
+
+```
+if *Creds != "" {
+  os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", *Creds)
+}
+```
+
+Where *Creds* is the path to the JSON key, generated from your GCE portal.
