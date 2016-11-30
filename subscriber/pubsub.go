@@ -27,6 +27,7 @@ func NewAgent(projectID string) (*Agent, error) {
 	var agent Agent
 	agent.Verbose = true
 	agent.Env = "development"
+	agent.ProjectID = projectID
 
 	ctx := context.Background()
 	PubSubClient, err := pubsub.NewClient(ctx, projectID)

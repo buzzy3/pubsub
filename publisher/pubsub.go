@@ -27,6 +27,7 @@ func NewAgent(projectID string) (*Agent, error) {
 	var agent Agent
 	agent.Verbose = true
 	agent.Env = "development"
+	agent.ProjectID = projectID
 
 	ctx := context.Background()
 	PubSubClient, err := pubsub.NewClient(ctx, projectID)
@@ -50,6 +51,7 @@ func (agent *Agent) Publish(msg []byte, topic string) {
 		}
 
 		t := agent.Client.Topic(topic)
+		log.Print("xx---------------------------------------xx", t)
 
 		msgIDs, err := t.Publish(ctx, &pubsub.Message{
 			Data: []byte(msg),
@@ -65,8 +67,5 @@ func (agent *Agent) Publish(msg []byte, topic string) {
 }
 
 func (agent *Agent) shouldPublish() bool {
-	if agent.Env == "production" || agent.Env == "development" {
-		return agent.ProjectID != ""
-	}
-	return false
+	return agent.ProjectID != ""
 }
