@@ -51,7 +51,6 @@ func (agent *Agent) Publish(msg []byte, topic string) {
 		}
 
 		t := agent.Client.Topic(topic)
-		log.Print("xx---------------------------------------xx", t)
 
 		msgIDs, err := t.Publish(ctx, &pubsub.Message{
 			Data: []byte(msg),
