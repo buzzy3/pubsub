@@ -52,15 +52,14 @@ func (agent *Agent) Publish(msg []byte, topic string) {
 
 		t := agent.Client.Topic(topic)
 
-		msgIDs, err := t.Publish(ctx, &pubsub.Message{
-			Data: []byte(msg),
-		})
+		res := t.Publish(ctx, &pubsub.Message{Data: []byte(msg)})
+		log.Print(res)
 
-		if err != nil {
-			log.Println("COULD NOT PUBLISH MESSAGE", err)
-		} else {
-			log.Printf("Published a message with a message id: %s\n", msgIDs[0])
-		}
+		// if err != nil {
+		// 	log.Println("COULD NOT PUBLISH MESSAGE", err)
+		// } else {
+		// 	// log.Printf("Published a message with a message id: %s\n", msgIDs[0])
+		// }
 		return
 	}
 }
