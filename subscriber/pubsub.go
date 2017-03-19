@@ -40,19 +40,19 @@ func NewAgent(projectID string) (*Agent, error) {
 	return &agent, nil
 }
 
-func (agent *Agent) Subscribe() *pubsub.MessageIterator {
+// func (agent *Agent) Subscribe() *pubsub.MessageIterator {
 
-	if agent.Env == "development" || agent.Env == "production" {
+// 	if agent.Env == "development" || agent.Env == "production" {
 
-		ctx := context.Background()
+// 		ctx := context.Background()
 
-		subscription = agent.Client.Subscription(agent.Subscription)
+// 		subscription = agent.Client.Subscription(agent.Subscription)
 
-		it, err := subscription.Pull(ctx)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return it
-	}
-	return nil
-}
+// 		it, err := subscription.Pull(ctx)
+// 		if err != nil {
+// 			log.Fatal(err)
+// 		}
+// 		return it
+// 	}
+// 	return nil
+// }
