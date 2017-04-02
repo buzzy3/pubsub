@@ -42,26 +42,20 @@ func NewAgent(projectID string) (*Agent, error) {
 
 // Publish sends a message to PUBSUB
 func (agent *Agent) Publish(msg []byte, topic string) {
-	if agent.shouldPublish() {
-
-		ctx := context.Background()
-
-		if os.Getenv("PUBSUB_EMULATOR_HOST") != "" {
-			fmt.Printf("USING PUBSUB EMULATOR: %s\n", os.Getenv("PUBSUB_EMULATOR_HOST"))
-		}
-
-		t := agent.Client.Topic(topic)
-
-		res := t.Publish(ctx, &pubsub.Message{Data: []byte(msg)})
-		log.Print(res)
-
-		// if err != nil {
-		// 	log.Println("COULD NOT PUBLISH MESSAGE", err)
-		// } else {
-		// 	// log.Printf("Published a message with a message id: %s\n", msgIDs[0])
-		// }
+	if !agent.shouldPublish() {
 		return
 	}
+
+	ctx := context.Background()
+
+	if os.Getenv("PUBSUB_EMULATOR_HOST") != "" {
+		fmt.Printf("USING PUBSUB EMULATOR: %s\n", os.Getenv("PUBSUB_EMULATOR_HOST"))
+	}
+
+	t := agent.Client.Topic(topic)
+
+	t.Publish(ctx, &pubsub.Message{Data: []byte(msg)})
+	return
 }
 
 func (agent *Agent) shouldPublish() bool {
