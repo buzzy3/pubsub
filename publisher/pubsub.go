@@ -55,6 +55,8 @@ func (agent *Agent) Publish(msg []byte, topic string) {
 	t := agent.Client.Topic(topic)
 
 	t.Publish(ctx, &pubsub.Message{Data: []byte(msg)})
+	t.Stop()
+
 	return
 }
 
